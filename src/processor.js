@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var stripCssComments = require('strip-css-comments');
 var Declaration = require('./declaration');
 var DeclarationStore = require('./declarationStore');
 var utilities = require('./utilities');
@@ -69,6 +70,10 @@ function hasScope(options) {
   return options && options.scope && typeof options.scope === 'string';
 }
 
+function hasSripComment(options) {
+  return options && options.stripComments;
+}
+
 function hasDependencies(options) {
   return options && options.dependencies && options.dependencies.length > 0;
 }
@@ -79,13 +84,24 @@ function normalizeLines(line) {
 }
 
 function declarationsFromString(path, declarationStore, options) {
+  var dataString;
   var data = fs.readFileSync(path, 'utf8');
+
+
 
   if (hasScope(options)) {
     data = extractScope(data, options.scope);
   }
 
-  var lines = String(data).split(LINE_DELIMITER).map(normalizeLines).filter(filterLines);
+  dataString = String(data);
+  if (hasSripComment(options)) {
+    stripCssComments(
+      dataString,
+      {preserve: false}
+    );
+  }
+
+  var lines = dataString.split(LINE_DELIMITER).map(normalizeLines).filter(filterLines);
   return lines.map(function(line) {
     return new Declaration(line, declarationStore);
   });

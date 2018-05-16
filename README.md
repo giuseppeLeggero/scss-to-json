@@ -59,6 +59,10 @@ var colors = scssToJson(filePath);
 
 The second argument of the returned function is an optional options object. Each option is detailed below:
 
+### Strip All Comments
+Strip all comments.
+stripComments : true
+
 ### Dependencies
 
 SCSS variables files sometimes rely on other SCSS variables defined earlier in your import tree. In order to keep these files isolated (and still produce JSON), you can specify an array of files that your given file depends on. For example, below we are trying to convert our color mapping file, but it depends on the actual color definitions which are found in a different file.
